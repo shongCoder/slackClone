@@ -1,4 +1,5 @@
 import { styled } from "styled-components";
+import Channel from "./Channel";
 
 const Title = styled.h1`
   font-size: ${(props) => props.fontSize};
@@ -11,7 +12,7 @@ const Wrap = styled.div`
 `;
 
 const LeftSide = styled.div`
-  background-color: blue;
+  background-color: #0162f3;
   width: 300px;
   color: white;
   padding: 40px 20px 20px 30px;
@@ -32,7 +33,7 @@ function Home() {
           <Title fontSize="24px">WorkSpace</Title>
           <button>edit</button>
         </FlexBox>
-        <div>
+        <div style={{ marginTop: "80px" }}>
           <Title fontSize="16px">채널</Title>
           <ul style={{ marginLeft: "10px" }}>
             <li># One Channel</li>
@@ -55,28 +56,7 @@ function Home() {
       </LeftSide>
       {/* 좌측 사이드 */}
       {/* 센터 */}
-      <div style={{ width: "100%", backgroundColor: "#eceded" }}>
-        <div
-          style={{
-            height: "140px",
-            backgroundColor: "white",
-            boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.05)",
-          }}
-        >
-          <FlexBox justifyContent="center">
-            <input
-              type="text"
-              placeholder="검색"
-              style={{ width: "50%" }}
-            ></input>
-          </FlexBox>
-          <FlexBox>
-            <Title fontSize="22px"># Two channel</Title>
-            <p>Channel introduce editable</p>
-            <button>edit</button>
-          </FlexBox>
-        </div>
-      </div>
+      <Channel />
       {/* 센터 */}
     </Wrap>
   );
