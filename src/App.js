@@ -1,5 +1,12 @@
-import Home from "./Home";
+import Home from "./components/Home";
 import { createGlobalStyle } from "styled-components";
+import {
+  RecoilRoot,
+  atom,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+} from "recoil";
 
 const GlobalStyle = createGlobalStyle`
 html, body, div, span, applet, object, iframe,
@@ -49,10 +56,12 @@ table {
 
 function App() {
   return (
-    <div>
-      <GlobalStyle />
-      <Home />
-    </div>
+    <>
+      <RecoilRoot>
+        <GlobalStyle />
+        <Home />
+      </RecoilRoot>
+    </>
   );
 }
 
