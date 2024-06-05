@@ -1,4 +1,4 @@
-import Home from "./components/Home";
+import MessageForm from "./components/MessageForm";
 import { createGlobalStyle } from "styled-components";
 import {
   RecoilRoot,
@@ -59,7 +59,7 @@ function App() {
     <>
       <RecoilRoot>
         <GlobalStyle />
-        <Home />
+        <MessageForm />
       </RecoilRoot>
     </>
   );
