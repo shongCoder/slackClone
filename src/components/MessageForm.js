@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 
 function MessageForm() {
   const [message, setMessage] = useRecoilState(messageState);
-  const [edit, setEdit] = useState(false);
+  const [edit, setEdit] = useState(null);
   const [editMessage, setEditMessage] = useState("");
   const name = useRecoilValue(nameState);
   const profile = useRecoilValue(profileState);
@@ -30,26 +30,20 @@ function MessageForm() {
     });
   };
 
-  const onEdit = (event) => {
-    event.preventDefault();
-    if (edit) {
-      setEdit(false);
-    } else {
-      setEdit(true);
-    }
-  };
-
-  const onEditing = (event) => {
-    setEditMessage(event.target.value);
+  const onEdit = (id) => {
+    setEdit(id);
+    const editText = message.find((item) => item.id == id).text;
+    setEditMessage(editText);
   };
 
   const onEditSubmit = (event) => {
-    const newMessage = message.map((item) => ({
-      ...item,
-      text: item.id == event.id ? editMessage : item.text,
-    }));
-    setMessage(newMessage);
-    setEdit(false);
+    event.preventDefault();
+    setMessage((oldMessage) =>
+      oldMessage.map((item) =>
+        item.id == edit ? { ...item, text: editMessage } : item
+      )
+    );
+    setEdit(null);
   };
 
   return (
@@ -68,19 +62,18 @@ function MessageForm() {
         <>
           <div key={item.id} style={{ display: "flex", alignItems: "center" }}>
             <img src={item.profile} width="40px" height="40px" />
-            {edit ? (
+            {edit == item.id ? (
               <>
-                <form onSubmit={handleSubmit(onEditSubmit)}>
+                <form onSubmit={onEditSubmit}>
                   <input
-                    {...register("editMessage")}
                     type="text"
                     value={editMessage}
                     placeholder="메세지를 입력하세요"
-                    onChange={onEditing}
+                    onChange={(e) => setEditMessage(e.target.value)}
                   ></input>
                   <div style={{ marginLeft: "10px" }}>
                     <button type="submit">완료</button>
-                    <button onClick={onEdit}>취소</button>
+                    <button onClick={() => setEdit(null)}>취소</button>
                   </div>
                 </form>
               </>
@@ -104,7 +97,7 @@ function MessageForm() {
                   <p style={{ marginLeft: "10px" }}>{item.text}</p>
                 </div>
                 <div style={{ marginLeft: "10px" }}>
-                  <button onClick={onEdit}>수정</button>
+                  <button onClick={() => onEdit(item.id)}>수정</button>
                   <button onClick={() => onDelete(item.id)}>삭제</button>
                 </div>
               </>
