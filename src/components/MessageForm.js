@@ -65,15 +65,23 @@ function MessageForm() {
             {edit == item.id ? (
               <>
                 <form onSubmit={onEditSubmit}>
-                  <input
-                    type="text"
-                    value={editMessage}
-                    placeholder="메세지를 입력하세요"
-                    onChange={(e) => setEditMessage(e.target.value)}
-                  ></input>
-                  <div style={{ marginLeft: "10px" }}>
-                    <button type="submit">완료</button>
-                    <button onClick={() => setEdit(null)}>취소</button>
+                  <div
+                    style={{
+                      display: "flex",
+                      marginLeft: "10px",
+                      alignItems: "center",
+                    }}
+                  >
+                    <input
+                      type="text"
+                      value={editMessage}
+                      placeholder="메세지를 입력하세요"
+                      onChange={(e) => setEditMessage(e.target.value)}
+                    ></input>
+                    <div style={{ marginLeft: "10px" }}>
+                      <button type="submit">완료</button>
+                      <button onClick={() => setEdit(null)}>취소</button>
+                    </div>
                   </div>
                 </form>
               </>
