@@ -21,6 +21,10 @@ db.connect((err) => {
   console.log("Connected to MySQL database.");
 });
 
+app.get("/", (req, res) => {
+  res.send("Hello, this is the root endpoint!");
+});
+
 // 사용자 추가 엔드포인트
 app.post("/addUser", (req, res) => {
   const { name, profile } = req.body;
@@ -46,6 +50,37 @@ app.post("/addMessage", (req, res) => {
       res.status(500).send(err);
     } else {
       res.status(200).send("Message added successfully");
+    }
+  });
+});
+
+// 메시지 삭제 엔드포인트
+app.delete("/delMessage/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = "DELETE FROM messages WHERE id = ?";
+  console.log(`Attempting to delete message with id: ${id}`);
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error("Error deleting message:", err);
+      res.status(500).send(err);
+    } else {
+      res.status(200).send("Message deleted successfully");
+    }
+  });
+});
+
+// 메시지 수정 엔드포인트
+app.put("/editMessage/:id", (req, res) => {
+  const { id } = req.params;
+  const { text } = req.body;
+  const sql = "UPDATE messages SET text = ? WHERE id = ?";
+  console.log(`Attempting to edit message with id: ${id}`);
+  db.query(sql, [text, id], (err, result) => {
+    if (err) {
+      console.error("Error editing message:", err);
+      res.status(500).send(err);
+    } else {
+      res.status(200).send("Message edited successfully");
     }
   });
 });

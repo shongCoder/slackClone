@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { messageState, nameState, profileState } from "../atom";
 import { useForm } from "react-hook-form";
-import { addMessage, getMessages } from "../api";
+import { addMessage, getMessages, delMessage, editMessage } from "../api";
 
 function MessageForm() {
   const [message, setMessage] = useRecoilState(messageState);
   const [edit, setEdit] = useState(null);
-  const [editMessage, setEditMessage] = useState("");
+  const [editText, setEditText] = useState("");
   const name = useRecoilValue(nameState);
   const profile = useRecoilValue(profileState);
   const { register, setValue, handleSubmit } = useForm();
@@ -58,26 +58,49 @@ function MessageForm() {
     }
   };
 
-  const onDelete = (id) => {
-    setMessage((oldMessage) => {
-      return oldMessage.filter((message) => message.id !== id);
-    });
+  // const onDelete = (id) => {
+  //   setMessage((oldMessage) => {
+  //     return oldMessage.filter((message) => message.id !== id);
+  //   });
+  // };
+
+  const onDelete = async (id) => {
+    try {
+      await delMessage(id);
+      setMessage((oldMessage) => {
+        return oldMessage.filter((message) => message.id !== id);
+      });
+    } catch (error) {
+      console.log("Error delelting message", error);
+    }
   };
 
   const onEdit = (id) => {
     setEdit(id);
     const editText = message.find((item) => item.id == id).text;
-    setEditMessage(editText);
+    setEditText(editText);
   };
 
-  const onEditSubmit = (event) => {
+  // const onEditSubmit = (event) => {
+  //   event.preventDefault();
+  //   setMessage((oldMessage) =>
+  //     oldMessage.map((item) =>
+  //       item.id == edit ? { ...item, text: editMessage } : item
+  //     )
+  //   );
+  //   setEdit(null);
+  // };
+
+  const onEditSubmit = async (event) => {
     event.preventDefault();
-    setMessage((oldMessage) =>
-      oldMessage.map((item) =>
-        item.id == edit ? { ...item, text: editMessage } : item
-      )
-    );
-    setEdit(null);
+    try {
+      await editMessage(edit, editText);
+      const response = await getMessages();
+      setMessage(response.deta);
+      setEdit(null);
+    } catch (error) {
+      console.log("Error editing message", error);
+    }
   };
 
   return (
@@ -92,33 +115,31 @@ function MessageForm() {
         <br />
         <br />
       </form>
-      {message.map((item) => (
-        <>
+      {message.length > 0 ? ( // 수정된 부분: 조건부 렌더링 추가
+        message.map((item) => (
           <div key={item.id} style={{ display: "flex", alignItems: "center" }}>
-            <img src={item.profile} width="40px" height="40px" />
-            {edit == item.id ? (
-              <>
-                <form onSubmit={onEditSubmit}>
-                  <div
-                    style={{
-                      display: "flex",
-                      marginLeft: "10px",
-                      alignItems: "center",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      value={editMessage}
-                      placeholder="메세지를 입력하세요"
-                      onChange={(e) => setEditMessage(e.target.value)}
-                    ></input>
-                    <div style={{ marginLeft: "10px" }}>
-                      <button type="submit">완료</button>
-                      <button onClick={() => setEdit(null)}>취소</button>
-                    </div>
+            <img src={item.profile} width="40px" height="40px" alt="profile" />
+            {edit === item.id ? (
+              <form onSubmit={onEditSubmit}>
+                <div
+                  style={{
+                    display: "flex",
+                    marginLeft: "10px",
+                    alignItems: "center",
+                  }}
+                >
+                  <input
+                    type="text"
+                    value={editText}
+                    placeholder="메세지를 입력하세요"
+                    onChange={(e) => setEditText(e.target.value)}
+                  ></input>
+                  <div style={{ marginLeft: "10px" }}>
+                    <button type="submit">완료</button>
+                    <button onClick={() => setEdit(null)}>취소</button>
                   </div>
-                </form>
-              </>
+                </div>
+              </form>
             ) : (
               <>
                 <div>
@@ -145,9 +166,10 @@ function MessageForm() {
               </>
             )}
           </div>
-          <br />
-        </>
-      ))}
+        ))
+      ) : (
+        <p>메세지가 없습니다.</p> // 수정된 부분: 데이터가 없을 때 보여줄 메시지 추가
+      )}
     </>
   );
 }

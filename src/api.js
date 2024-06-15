@@ -13,3 +13,11 @@ export const addMessage = async (message) => {
 export const getMessages = async () => {
   return await axios.get(`${API_URL}/getMessages`);
 };
+
+export const delMessage = async (id) => {
+  return await axios.delete(`${API_URL}/delMessage/${id}`);
+};
+
+export const editMessage = async (id, text) => {
+  return await axios.put(`${API_URL}/editMessage/${id}`, { text });
+};
