@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { messageState, nameState, profileState } from "../atom";
 import { useForm } from "react-hook-form";
+import { addMessage, getMessages } from "../api";
 
 function MessageForm() {
   const [message, setMessage] = useRecoilState(messageState);
@@ -11,17 +12,50 @@ function MessageForm() {
   const profile = useRecoilValue(profileState);
   const { register, setValue, handleSubmit } = useForm();
 
-  const onSubmit = ({ message }) => {
+  // const onSubmit = ({ message }) => {
+  //   const now = new Date();
+  //   const hours = now.getHours().toString().padStart(2, "0");
+  //   const minutes = now.getMinutes().toString().padStart(2, "0");
+  //   const currentTime = `${hours}:${minutes}`;
+
+  //   setMessage((oldMessage) => [
+  //     { text: message, time: currentTime, id: Date.now(), name, profile },
+  //     ...oldMessage,
+  //   ]);
+  //   setValue("message", "");
+  // };
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await getMessages();
+        setMessage(response.data);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+    fetchMessages();
+  }, [setMessage]);
+
+  const onSubmit = async ({ message }) => {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, "0");
     const minutes = now.getMinutes().toString().padStart(2, "0");
     const currentTime = `${hours}:${minutes}`;
 
-    setMessage((oldMessage) => [
-      { text: message, time: currentTime, id: Date.now(), name, profile },
-      ...oldMessage,
-    ]);
-    setValue("message", "");
+    try {
+      await addMessage({
+        id: Date.now(),
+        text: message,
+        name: name,
+        time: currentTime,
+      });
+      const response = await getMessages();
+      setMessage(response.data);
+      setValue("message", "");
+    } catch (error) {
+      console.error("Error submitting message:", error);
+    }
   };
 
   const onDelete = (id) => {
