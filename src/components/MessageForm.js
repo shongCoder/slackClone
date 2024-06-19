@@ -9,7 +9,7 @@ function MessageForm() {
   const [edit, setEdit] = useState(null);
   const [editText, setEditText] = useState("");
   const name = useRecoilValue(nameState);
-  const profile = useRecoilValue(profileState);
+  //const profile = useRecoilValue(profileState);
   const { register, setValue, handleSubmit } = useForm();
 
   // const onSubmit = ({ message }) => {
@@ -37,7 +37,7 @@ function MessageForm() {
     fetchMessages();
   }, [setMessage]);
 
-  const onSubmit = async ({ message }) => {
+  const onSubmit = async ({ message: newMessage }) => {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, "0");
     const minutes = now.getMinutes().toString().padStart(2, "0");
@@ -46,7 +46,7 @@ function MessageForm() {
     try {
       await addMessage({
         id: Date.now(),
-        text: message,
+        text: newMessage,
         name: name,
         time: currentTime,
       });
@@ -96,7 +96,7 @@ function MessageForm() {
     try {
       await editMessage(edit, editText);
       const response = await getMessages();
-      setMessage(response.deta);
+      setMessage(response.data);
       setEdit(null);
     } catch (error) {
       console.log("Error editing message", error);
@@ -115,7 +115,7 @@ function MessageForm() {
         <br />
         <br />
       </form>
-      {message.length > 0 ? ( // 수정된 부분: 조건부 렌더링 추가
+      {message && message.length > 0 ? ( // 조건부 렌더링 추가
         message.map((item) => (
           <div key={item.id} style={{ display: "flex", alignItems: "center" }}>
             <img src={item.profile} width="40px" height="40px" alt="profile" />
@@ -168,7 +168,7 @@ function MessageForm() {
           </div>
         ))
       ) : (
-        <p>메세지가 없습니다.</p> // 수정된 부분: 데이터가 없을 때 보여줄 메시지 추가
+        <p>메세지가 없습니다.</p> // 데이터가 없을 때 보여줄 메시지 추가
       )}
     </>
   );
