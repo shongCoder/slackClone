@@ -35,9 +35,9 @@ function MessageForm() {
       }
     };
     fetchMessages();
-  }, [setMessage]);
+  }, []);
 
-  const onSubmit = async ({ message: newMessage }) => {
+  const onSubmit = async ({ message }) => {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, "0");
     const minutes = now.getMinutes().toString().padStart(2, "0");
@@ -46,7 +46,7 @@ function MessageForm() {
     try {
       await addMessage({
         id: Date.now(),
-        text: newMessage,
+        text: message,
         name: name,
         time: currentTime,
       });
