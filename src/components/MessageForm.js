@@ -9,21 +9,7 @@ function MessageForm() {
   const [edit, setEdit] = useState(null);
   const [editText, setEditText] = useState("");
   const name = useRecoilValue(nameState);
-  //const profile = useRecoilValue(profileState);
   const { register, setValue, handleSubmit } = useForm();
-
-  // const onSubmit = ({ message }) => {
-  //   const now = new Date();
-  //   const hours = now.getHours().toString().padStart(2, "0");
-  //   const minutes = now.getMinutes().toString().padStart(2, "0");
-  //   const currentTime = `${hours}:${minutes}`;
-
-  //   setMessage((oldMessage) => [
-  //     { text: message, time: currentTime, id: Date.now(), name, profile },
-  //     ...oldMessage,
-  //   ]);
-  //   setValue("message", "");
-  // };
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -58,12 +44,6 @@ function MessageForm() {
     }
   };
 
-  // const onDelete = (id) => {
-  //   setMessage((oldMessage) => {
-  //     return oldMessage.filter((message) => message.id !== id);
-  //   });
-  // };
-
   const onDelete = async (id) => {
     try {
       await delMessage(id);
@@ -80,16 +60,6 @@ function MessageForm() {
     const editText = message.find((item) => item.id == id).text;
     setEditText(editText);
   };
-
-  // const onEditSubmit = (event) => {
-  //   event.preventDefault();
-  //   setMessage((oldMessage) =>
-  //     oldMessage.map((item) =>
-  //       item.id == edit ? { ...item, text: editMessage } : item
-  //     )
-  //   );
-  //   setEdit(null);
-  // };
 
   const onEditSubmit = async (event) => {
     event.preventDefault();
@@ -115,7 +85,7 @@ function MessageForm() {
         <br />
         <br />
       </form>
-      {message && message.length > 0 ? ( // 조건부 렌더링 추가
+      {message && message.length > 0 ? (
         message.map((item) => (
           <div key={item.id} style={{ display: "flex", alignItems: "center" }}>
             <img src={item.profile} width="40px" height="40px" alt="profile" />
